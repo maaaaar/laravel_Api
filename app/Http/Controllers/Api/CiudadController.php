@@ -55,7 +55,21 @@ class CiudadController extends Controller
 
     public function update(Request $request, Ciudad $ciudad)
     {
-        //
+        $ciudad->nombre = $request->input('nombre');
+
+        try
+        {
+            $ciudad->save();
+            //el status es para dar el mensaje en el postman status
+            $respuesta = (new CiudadRecource($ciudad))->response()->setStatusCode(201);
+        }
+        catch (QueryException $e)
+        {
+            $mensaje = Utilitats::errorMessage($e);
+            $respuesta = response()->json(['error'=>$mensaje], 400);
+        }
+
+        return $respuesta;
     }
 
     // para borrar ciudad
