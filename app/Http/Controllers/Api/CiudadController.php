@@ -48,6 +48,7 @@ class CiudadController extends Controller
     {
         //find busca por clave primaria
         //el with es para que se muestre los hoteles en cada ciudad
+        //para coger los hoteles de las ciudades (relacion models)
         $ciudad = Ciudad::with('hoteles')->find($id_ciudad);
 
         return new CiudadRecource($ciudad);
@@ -75,7 +76,7 @@ class CiudadController extends Controller
     // para borrar ciudad
     public function destroy($id_ciudad)
     {
-        $ciudad = Ciudad::find($is_ciudad);
+        $ciudad = Ciudad::find($id_ciudad);
 
         //para comprobar si la ciudad exsiste o no
         if ($ciudad == null)

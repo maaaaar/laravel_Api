@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Ciudad extends Model
 {
     protected $table = 'ciudades';
-    protected $primaryKey = 'id_ciudades';
+    protected $primaryKey = 'id_ciudad';
     public $incrementing = false; //porque el dni no es incremental
     protected $keyType = 'int';
 

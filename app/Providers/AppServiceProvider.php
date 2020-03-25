@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        //quita el data en el json (postman)
+        Resource::withoutWrapping();
     }
 }
