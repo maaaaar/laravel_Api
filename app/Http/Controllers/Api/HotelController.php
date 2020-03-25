@@ -10,14 +10,22 @@ class HotelController extends Controller
 {
     public function index()
     {
-        $hoteles = Hotel::all();
+        try
+        {
+            $hoteles = Hotel::all();
+        } catch (QueryException $e) {
+            $mensaje = Utilitats::errorMessage($e);
+            $respuesta = response()->json(['error'=>$mensaje], 403);
+        }
+
+        //devuelve un json con todas las ciudades
         return HotelResource::collection($hoteles);
     }
 
     public function store(Request $request)
     {
         $hotel = new Hotel();
-        $hotel-> //id_ciudad
+        $hotel->id_ciudad = $request->input('id_ciudad');
         $hotel->nombre = $request->input('nombre');
         $hotel->categoria = $request->input('categoria');
         $hotel->direccion = $request->input('direccion');
@@ -26,7 +34,7 @@ class HotelController extends Controller
         try
         {
             $hotel->save();
-            $respuesta = (new HotelResource($hotel))->response()->setStatusCode(201);
+            //$respuesta = (new HotelResource($hotel))->response()->setStatusCode(201);
         }
         catch (QueryException $e)
         {
@@ -34,16 +42,34 @@ class HotelController extends Controller
             $respuesta = response()->json(['error'=>$mensaje], 400);
         }
 
-        return $respuesta;
+        return (new HotelResource ($hotel))
+            ->response()
+            ->setStatusCode(201);
+
     }
 
-    public function show(Hotel $hotel)
+    public function show($id, $nombre)
     {
         $hotel = Hotel::with('cadena')->find($nombre);
         return new HotelResource($hotel);
+        try
+        {
+            $hotel = Hotel::where('id_ciudad', $id)->where("nombre", $nombre)->first();
+            if($hotel == null)
+            {
+                return response()->json(['error'=> "No s'ha trobat l'hotel"], 404);
+            }
+        }
+        catch (QueryException $e)
+        {
+            $mensaje = Utilitats::errorMessage($e);
+            $respuesta = response()->json(['error'=>$mensaje], 403);
+        }
+
+        return HotelResource($hoteles);
     }
 
-    public function update(Request $request, Hotel $hotel)
+    public function update(Request $request, $id,$nombre)
     {
         $hotel->nombre = $request->input('nombre');
 

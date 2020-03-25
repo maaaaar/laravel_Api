@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+
+use App\Models\Cadena;
+use App\Models\Ciudad;
 
 class Hotel extends Model
 {
@@ -22,5 +26,14 @@ class Hotel extends Model
     public function cadena()
     {
         return $this->belongsTo('App\Models\Cadena', 'cif');
+    }
+
+    //cuando haga un save le indica cuales son las claves primary
+    public function setKeysForSaveQuery(Builder $query)
+    {
+        $query
+            ->where('id_ciudad', '=', $this->getAttribute('id_ciudad'))
+            ->where('nombre', '=', $this->getAttribute('nombre'));
+        return $query;
     }
 }
