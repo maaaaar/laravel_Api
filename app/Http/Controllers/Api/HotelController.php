@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Hotel;
+use App\Clases\Utilitats;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\HotelResource;
+use Illuminate\Database\QueryException;
 
 class HotelController extends Controller
 {
@@ -50,14 +53,13 @@ class HotelController extends Controller
 
     public function show($id, $nombre)
     {
-        $hotel = Hotel::with('cadena')->find($nombre);
-        return new HotelResource($hotel);
+        $hotel = Hotel::with('cadena')->where([['id_ciudad', '=', $id], ['nombre', '=', $nombre]])->first();
         try
         {
             $hotel = Hotel::where('id_ciudad', $id)->where("nombre", $nombre)->first();
             if($hotel == null)
             {
-                return response()->json(['error'=> "No s'ha trobat l'hotel"], 404);
+                $respuesta =  response()->json(['error'=> "No s'ha trobat l'hotel"], 404);
             }
         }
         catch (QueryException $e)
@@ -66,12 +68,12 @@ class HotelController extends Controller
             $respuesta = response()->json(['error'=>$mensaje], 403);
         }
 
-        return HotelResource($hoteles);
+        return $respuesta;
     }
 
     public function update(Request $request, $id,$nombre)
     {
-        $hotel->nombre = $request->input('nombre');
+        $hotel = Hotel::with('cadena')->where([['id_ciudad', '=', $id], ['nombre', '=', $nombre]])->first();
 
         try
         {
@@ -87,9 +89,10 @@ class HotelController extends Controller
         return $respuesta;
     }
 
-    public function destroy(Hotel $hotel)
+    public function destroy(Hotel $hotel, $id, $nombre)
     {
-        $hotel = Hotel::find();
+        // $hotel = Hotel::find();
+        $hotel = Hotel::with('cadena')->where([['id_ciudad', '=', $id], ['nombre', '=', $nombre]])->first();
 
         //para comprobar si la ciudad exsiste o no
         if ($hotel == null)

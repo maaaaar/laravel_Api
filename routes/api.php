@@ -20,3 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::apiResource('ciudad', 'Api\CiudadController');
 Route::apiResource('hotel', 'Api\HotelController');
 Route::apiResource('cadena', 'Api\CadenaController');
+Route::get('hotel/{id_ciudad}/{nombre}','Api\HotelController@show');
+Route::put('hotel/{id_ciudad}/{nombre}','Api\HotelController@update');
+Route::delete('hotel/{id_ciudad}/{nombre}','Api\HotelController@destroy');
